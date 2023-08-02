@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:capcut_template/Api/ApiHelper.dart';
 import 'package:capcut_template/Models/Category.dart';
 import 'package:capcut_template/Models/Settings.dart';
@@ -5,8 +7,10 @@ import 'package:capcut_template/Models/TemplateObject.dart';
 import 'package:capcut_template/Screens/LikedScreen.dart';
 import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Router.dart';
+import 'package:capcut_template/Utils/add_helper.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,18 +24,34 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   double screenWidth = 1000;
   double screenHeight = 1000;
-
   List<Category> categories = [];
   List<TemplateObject> templates = [];
-  List<String> _likes = [];
-  // List<String> names = ['Arslan', 'Zimal'];
-
   int _selectedTab = 1;
   Category? _selectedCategory;
   Category? _leavedCategory;
   String searchText = '';
-
+  BannerAd? _bannerAd;
   SharedPreferences? prefs;
+
+  Future<void> loadBannerAd() async {
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+          log('banner ad loaded${_bannerAd!.responseInfo}');
+        },
+        onAdFailedToLoad: (ad, err) {
+          log('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
 
   Future<void> _getCategories() async {
     List<Category> categoriesDataList = [];
@@ -50,10 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
         setState(() {
-          categories = categoriesDataList
-            ..sort((a, b) => a.sequence.compareTo(b.sequence));
-          _selectedCategory =
-              categories.singleWhere((element) => element.name == 'For You');
+          categories = categoriesDataList..sort((a, b) => a.sequence.compareTo(b.sequence));
+          _selectedCategory = categories.singleWhere((element) => element.name == 'For You');
         });
       }
     });
@@ -83,19 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
     List<TemplateObject> sortedItems = [];
 
     for (var singleTemplate in templates) {
-      bool situation1 = singleTemplate.Creater_name.toLowerCase()
-              .split(searchText.toLowerCase())
-              .length >
-          1;
-      bool situation2 = singleTemplate.Template_Name.toLowerCase()
-              .split(searchText.toLowerCase())
-              .length >
-          1;
+      bool situation1 = singleTemplate.Creater_name.toLowerCase().split(searchText.toLowerCase()).length > 1;
+      bool situation2 = singleTemplate.Template_Name.toLowerCase().split(searchText.toLowerCase()).length > 1;
 
       bool situation3 = false;
       singleTemplate.Tags.split('#').forEach((singleTag) {
-        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length >
-            1) {
+        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length > 1) {
           // print(singleTag);
           situation3 = true;
         }
@@ -119,10 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    loadBannerAd();
     _getCategories();
     _getTemplates();
     // _getLikes();
     super.initState();
+  }
+
+  @override
+  dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
   }
 
   @override
@@ -136,8 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _selectedTab = index;
             if (_selectedTab == 2) {
               _leavedCategory = _selectedCategory;
-              _selectedCategory = categories
-                  .singleWhere((element) => element.name == 'Trending');
+              _selectedCategory = categories.singleWhere((element) => element.name == 'Trending');
             } else if (_selectedTab == 0) {
               _leavedCategory = _selectedCategory;
             } else {
@@ -174,9 +191,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _selectedTab != 0
-          ? _bodyView()
-          : LikedScreen(settings: widget.settings),
+      body: Stack(
+        children: [
+          _selectedTab != 0 ? _bodyView() : LikedScreen(settings: widget.settings),
+          if (_bannerAd != null)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: _bannerAd!.size.width.toDouble(),
+                height: _bannerAd!.size.height.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -246,12 +274,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         categories[index].name,
                         style: TextStyle(
                           fontSize: Dimensions.fontSizeDefault,
-                          color: _selectedCategory == categories[index]
-                              ? AppThemeColor.pureWhiteColor
-                              : AppThemeColor.pureBlackColor,
-                          fontWeight: _selectedCategory == categories[index]
-                              ? FontWeight.w700
-                              : FontWeight.w400,
+                          color: _selectedCategory == categories[index] ? AppThemeColor.pureWhiteColor : AppThemeColor.pureBlackColor,
+                          fontWeight: _selectedCategory == categories[index] ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                     ),
@@ -276,8 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
               runSpacing: 10,
               children: getSortTemplates()
                   .map(
-                    (singleTemplate) =>
-                        _singleTemplateView(template: singleTemplate),
+                    (singleTemplate) => _singleTemplateView(template: singleTemplate),
                   )
                   .toList(),
             ),
@@ -341,8 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                       decoration: BoxDecoration(
                         color: AppThemeColor.dullBlackColor,
                         borderRadius: BorderRadius.circular(4),

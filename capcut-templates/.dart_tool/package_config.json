@@ -98,6 +98,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "google_mobile_ads",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/google_mobile_ads-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "html",
       "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/html-0.15.4",
       "packageUri": "lib/",
@@ -374,6 +380,36 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "visibility_detector",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/visibility_detector-0.3.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "webview_flutter",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter-4.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "webview_flutter_android",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter_android-3.9.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "webview_flutter_platform_interface",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter_platform_interface-2.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.7.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "win32",
       "rootUri": "file:///Users/ammanahmed/.pub-cache/hosted/pub.dev/win32-4.1.4",
       "packageUri": "lib/",
@@ -392,7 +428,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-07-24T16:54:29.391455Z",
+  "generated": "2023-07-24T19:44:14.402978Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }

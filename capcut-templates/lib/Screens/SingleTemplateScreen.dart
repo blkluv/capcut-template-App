@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:capcut_template/Models/Settings.dart';
 import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Images.dart';
+import 'package:capcut_template/Utils/add_helper.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -12,9 +17,7 @@ import '../Utils/Functions.dart';
 class SingleTemplateScreen extends StatefulWidget {
   final Settings settings;
   final TemplateObject template;
-  SingleTemplateScreen(
-      {Key? key, required this.settings, required this.template})
-      : super(key: key);
+  SingleTemplateScreen({Key? key, required this.settings, required this.template}) : super(key: key);
 
   @override
   State<SingleTemplateScreen> createState() => _SingleTemplateScreenState();
@@ -23,39 +26,89 @@ class SingleTemplateScreen extends StatefulWidget {
 class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   double screenWidth = 1000;
   double screenHeight = 1000;
-
   bool mute = false;
   bool videoInitialized = false;
-
   late VideoPlayerController _controller;
   Future<void>? _initializeVideoPlayerFuture;
   List<String> _likes = [];
   SharedPreferences? prefs;
+  BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
 
   @override
   void initState() {
     super.initState();
+    _loadInterstitialAd();
     _getLikes();
     print(widget.template.video_link);
-
     _controller = VideoPlayerController.network(
       widget.template.video_link,
     );
     _controller.setLooping(true);
-
     _initializeVideoPlayerFuture = _controller.initialize().then((value) {
       setState(() {
         videoInitialized = true;
       });
     });
+    loadBannerAd();
+    Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_interstitialAd != null) {
+        _interstitialAd?.show();
+      } else {
+        log('interstetial add not loaded');
+      }
+    });
   }
 
   @override
   void dispose() {
-    // Ensure disposing of the VideoPlayerController to free up resources.
     _controller.dispose();
-
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
+  }
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+            },
+          );
+          setState(() {
+            _interstitialAd = ad;
+          });
+          log('InterstitialAd loaded: ${_interstitialAd!.responseInfo}}');
+        },
+        onAdFailedToLoad: (err) {
+          log('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
+  }
+
+  Future<void> loadBannerAd() async {
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+          log('banner ad loaded${_bannerAd!.responseInfo}');
+        },
+        onAdFailedToLoad: (ad, err) {
+          log('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
   }
 
   Future<void> _getLikes() async {
@@ -126,75 +179,87 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
             height: 20,
           ),
           Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _templateImageView(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Text(
-                        widget.template.Creater_name,
-                        style: const TextStyle(
-                          fontSize: Dimensions.fontSizeDefault,
-                          color: AppThemeColor.pureBlackColor,
+            child: Stack(
+              children: [
+                Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _templateImageView(),
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.template.Template_Name,
-                              style: const TextStyle(
-                                fontSize: Dimensions.fontSizeLarge,
-                                fontWeight: FontWeight.w700,
-                                color: AppThemeColor.pureBlackColor,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(
+                            widget.template.Creater_name,
+                            style: const TextStyle(
+                              fontSize: Dimensions.fontSizeDefault,
+                              color: AppThemeColor.pureBlackColor,
                             ),
                           ),
-                          // const SizedBox(
-                          //   width: 13,
-                          // ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: AppThemeColor.grayColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              widget.template.Usage_detail,
-                              style: const TextStyle(
-                                fontSize: Dimensions.fontSizeExtraSmall,
-                                color: AppThemeColor.pureWhiteColor,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  widget.template.Template_Name,
+                                  style: const TextStyle(
+                                    fontSize: Dimensions.fontSizeLarge,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppThemeColor.pureBlackColor,
+                                  ),
+                                ),
                               ),
-                            ),
+                              // const SizedBox(
+                              //   width: 13,
+                              // ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: AppThemeColor.grayColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  widget.template.Usage_detail,
+                                  style: const TextStyle(
+                                    fontSize: Dimensions.fontSizeExtraSmall,
+                                    color: AppThemeColor.pureWhiteColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                if (_bannerAd != null)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      width: _bannerAd!.size.width.toDouble(),
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+                  ),
+              ],
             ),
           ),
           GestureDetector(
             onTap: () {
-              print(
-                  'Url is ${widget.settings.Redirect_url}${widget.template.Template_ID}');
+              print('Url is ${widget.settings.Redirect_url}${widget.template.Template_ID}');
               launchUrlByLink(
                   url:
                       //
@@ -287,9 +352,7 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
               },
             ),
             Icon(
-              _controller.value.isPlaying
-                  ? Icons.pause_circle
-                  : Icons.play_circle,
+              _controller.value.isPlaying ? Icons.pause_circle : Icons.play_circle,
               color: AppThemeColor.pureWhiteColor,
               size: 45,
             ),
