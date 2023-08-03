@@ -1,0 +1,6 @@
+framework module Pods_OneSignalServiceNotificationExtention {
+  umbrella header "Pods-OneSignalServiceNotificationExtention-umbrella.h"
+
+  export *
+  module * { export * }
+}
