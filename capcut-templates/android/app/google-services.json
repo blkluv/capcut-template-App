@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "703832008853",
+    "project_id": "capcuttemplateapp",
+    "storage_bucket": "capcuttemplateapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703832008853:android:19189f07ad9dc451e4d39c",
+        "android_client_info": {
+          "package_name": "com.stormdeve.capcut_template"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703832008853-e5hf4u8gu64uq4b4eqa0cujgni7uj18o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLfAQxi7_9aPOrdEjEo3I48nj8DLaX1wc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703832008853-e5hf4u8gu64uq4b4eqa0cujgni7uj18o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "703832008853-imf0hq41ms8r7r195hr3t7dlbpc0h3gk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.stormdeve.capcutTemplate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

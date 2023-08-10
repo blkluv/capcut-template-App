@@ -21,3 +21,13 @@ class AdHelper {
     }
   }
 }
+
+class AddSingleton {
+  static final AddSingleton _singleton = AddSingleton._internal();
+
+  factory AddSingleton() {
+    return _singleton;
+  }
+
+  AddSingleton._internal();
+}

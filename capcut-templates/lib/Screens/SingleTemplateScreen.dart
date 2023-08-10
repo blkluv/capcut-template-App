@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:developer';
 
@@ -5,9 +7,12 @@ import 'package:capcut_template/Models/Settings.dart';
 import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Images.dart';
 import 'package:capcut_template/Utils/add_helper.dart';
+import 'package:capcut_template/Utils/add_provider.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -38,7 +43,6 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInterstitialAd();
     _getLikes();
     print(widget.template.video_link);
     _controller = VideoPlayerController.network(
@@ -49,6 +53,9 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
       setState(() {
         videoInitialized = true;
       });
+    });
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _loadInterstitialAd();
     });
     loadBannerAd();
     Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -69,26 +76,32 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   }
 
   void _loadInterstitialAd() {
-    InterstitialAd.load(
-      adUnitId: AdHelper.interstitialAdUnitId,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (ad) {
-              ad.dispose();
-            },
-          );
-          setState(() {
-            _interstitialAd = ad;
-          });
-          log('InterstitialAd loaded: ${_interstitialAd!.responseInfo}}');
-        },
-        onAdFailedToLoad: (err) {
-          log('Failed to load an interstitial ad: ${err.message}');
-        },
-      ),
-    );
+    if (Provider.of<AddProvider>(context, listen: false).checkIfIsPlayAdd()) {
+      InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdDismissedFullScreenContent: (ad) {
+                ad.dispose();
+              },
+            );
+            setState(() {
+              _interstitialAd = ad;
+            });
+            log('InterstitialAd loaded: ${_interstitialAd!.responseInfo}}');
+          },
+          onAdFailedToLoad: (err) {
+            log('Failed to load an interstitial ad: ${err.message}');
+          },
+        ),
+      );
+      Provider.of<AddProvider>(context, listen: false).playAdd();
+    } else {
+      log('add not played count: ${Provider.of<AddProvider>(context, listen: false).addPlayCount}');
+      Provider.of<AddProvider>(context, listen: false).playAdd();
+    }
   }
 
   Future<void> loadBannerAd() async {
@@ -174,22 +187,20 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _appBarView(),
-          const SizedBox(
-            height: 20,
-          ),
+          // _appBarView(),
+          // const SizedBox(
+          //   height: 20,
+          // ),
           Expanded(
             child: Stack(
               children: [
                 Center(
-                  child: SingleChildScrollView(
+                  child: Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _templateImageView(),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Text(
@@ -292,71 +303,45 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   Widget _templateImageView() {
     return GestureDetector(
       onTap: () {
-        // Wrap the play or pause in a call to `setState`. This ensures the
-        // correct icon is shown.
         setState(() {
-          // If the video is playing, pause it.
           if (_controller.value.isPlaying) {
             _controller.pause();
           } else {
-            // If the video is paused, play it.
             _controller.play();
           }
         });
       },
       child: Container(
-        // height: screenWidth * 1.3,
-        // width: screenWidth,
-        margin: const EdgeInsets.symmetric(horizontal: 15),
-        // padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          // image: DecorationImage(
-          //   fit: BoxFit.cover,
-          //   image: NetworkImage(
-          //     widget.template.poster_link,
-          //   ),
-          // ),
-        ),
+        // margin: const EdgeInsets.symmetric(horizontal: 15),
+        height: MediaQuery.of(context).size.height * 0.5,
+        decoration: const BoxDecoration(color: Colors.black),
         alignment: Alignment.topCenter,
-        // child: Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     const Expanded(
-        //       child: SizedBox(),
-        //     ),
-        //
-        //   ],
-        // ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            FutureBuilder(
-              future: _initializeVideoPlayerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If the VideoPlayerController has finished initialization, use
-                  // the data it provides to limit the aspect ratio of the video.
-                  return AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    // Use the VideoPlayer widget to display the video.
-                    child: VideoPlayer(_controller),
-                  );
-                } else {
-                  // If the VideoPlayerController is still initializing, show a
-                  // loading spinner.
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-            Icon(
-              _controller.value.isPlaying ? Icons.pause_circle : Icons.play_circle,
-              color: AppThemeColor.pureWhiteColor,
-              size: 45,
-            ),
-          ],
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              FutureBuilder(
+                future: _initializeVideoPlayerFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      child: VideoPlayer(_controller),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+              Icon(
+                _controller.value.isPlaying ? Icons.pause_circle : Icons.play_circle,
+                color: AppThemeColor.pureWhiteColor,
+                size: 45,
+              ),
+            ],
+          ),
         ),
       ),
     );

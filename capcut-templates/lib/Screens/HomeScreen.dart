@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:capcut_template/Api/ApiHelper.dart';
@@ -9,6 +11,7 @@ import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Router.dart';
 import 'package:capcut_template/Utils/add_helper.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String searchText = '';
   BannerAd? _bannerAd;
   SharedPreferences? prefs;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  TextEditingController searchController = TextEditingController();
 
   Future<void> loadBannerAd() async {
     BannerAd(
@@ -215,11 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           _appBarView(),
-          _selectedTab != 2
-              ? _categoriesView()
-              : const SizedBox(
-                  height: 15,
-                ),
+          _selectedTab != 2 ? _categoriesView() : const SizedBox(height: 15),
           _templetesView(),
         ],
       ),
@@ -314,11 +315,21 @@ class _HomeScreenState extends State<HomeScreen> {
     // bool liked = checkLiked(template: template);
     double tabWidth = (screenWidth / 2) - 25;
     return InkWell(
-      onTap: () => RouterClass().singleTemplateScreenRoute(
-        context: context,
-        settings: widget.settings,
-        template: template,
-      ),
+      onTap: () async {
+        analytics.logEvent(name: 'template_opened', parameters: {
+          'id': template.id,
+          'name': template.Template_Name,
+          'creator': template.Creater_name,
+          'category': template.category,
+        }).then((value) => log('event'), onError: (e) {
+          log('event error: $e');
+        });
+        RouterClass().singleTemplateScreenRoute(
+          context: context,
+          settings: widget.settings,
+          template: template,
+        );
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -411,25 +422,34 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 3,
               ),
-              SizedBox(
-                width: tabWidth,
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.person,
-                      size: Dimensions.fontSizeSmall,
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      template.Creater_name,
-                      style: const TextStyle(
-                        fontSize: Dimensions.fontSizeExtraSmall,
-                        color: AppThemeColor.dullFontColor,
+              GestureDetector(
+                onTap: () {
+                  log('tap');
+                  setState(() {
+                    searchText = template.Creater_name;
+                    searchController.text = template.Creater_name;
+                  });
+                },
+                child: SizedBox(
+                  width: tabWidth,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.person,
+                        size: Dimensions.fontSizeSmall,
                       ),
-                    ),
-                  ],
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        template.Creater_name,
+                        style: const TextStyle(
+                          fontSize: Dimensions.fontSizeExtraSmall,
+                          color: AppThemeColor.dullFontColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(
@@ -447,7 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: const BoxDecoration(color: AppThemeColor.backGroundColor),
       child: SafeArea(
         child: Container(
-          height: 30,
+          height: 40,
           margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: const BoxDecoration(
@@ -459,43 +479,28 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Container(
             decoration: const BoxDecoration(
               color: AppThemeColor.dullWhiteColor,
-              // border: Border.all(color: AppThemeColor.grayColor),
-              borderRadius: BorderRadius.all(
-                Radius.circular(
-                  30,
-                ),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
+            // padding: const EdgeInsets.all(6),
+            child: TextFormField(
+              controller: searchController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(
                   Icons.search,
                   size: 20,
                   color: AppThemeColor.dullFontColor,
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 7),
-                      border: InputBorder.none,
-                      hintText: 'Search...',
-                    ),
-                    style: const TextStyle(
-                      fontSize: Dimensions.fontSizeDefault,
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        searchText = text;
-                      });
-                    },
-                  ),
-                ),
-              ],
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 7),
+                hintText: 'Search Template...',
+              ),
+              style: const TextStyle(fontSize: Dimensions.fontSizeDefault),
+              onChanged: (text) {
+                setState(() {
+                  searchText = text;
+                  // searchController.text = text;
+                });
+              },
             ),
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Images.dart';
 import 'package:capcut_template/Utils/Toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../Api/ApiHelper.dart';
 import '../Utils/Router.dart';
@@ -16,8 +17,7 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   double screenWidth = 1000;
   double screenHeight = 1000;
 
@@ -36,8 +36,7 @@ class _SplashScreenState extends State<SplashScreen>
 
         if (_settings != null) {
           Timer(const Duration(seconds: 3), () {
-            RouterClass()
-                .homeScreenRoute(context: context, settings: _settings!);
+            RouterClass().homeScreenRoute(context: context, settings: _settings!);
           });
         } else {
           ShowToast().showNormalToast(msg: 'Some thing going wrong!');
@@ -46,31 +45,14 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
-  late AnimationController logoAnimation;
-
-  _handleAnimation() {
-    logoAnimation = AnimationController(
-      upperBound: 500,
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    logoAnimation.forward();
-    logoAnimation.addListener(() {
-      setState(() {});
-    });
-  }
-
   @override
   void initState() {
     _getSettings();
-    _handleAnimation();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
         child: _bodyView(),
@@ -79,21 +61,20 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Widget _bodyView() {
-    return Container(
-      width: screenWidth,
-      height: screenHeight,
-      padding: const EdgeInsets.all(25),
-      decoration: const BoxDecoration(
-        gradient: AppThemeColor.backgroundGradient1,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            Images.inAppLogo,
-            width: logoAnimation.value,
+    return AnimationLimiter(
+      child: AnimationConfiguration.staggeredList(
+        duration: const Duration(milliseconds: 1500),
+        position: 3,
+        child: ScaleAnimation(
+          duration: const Duration(seconds: 2),
+          child: FadeInAnimation(
+            duration: const Duration(seconds: 2),
+            delay: const Duration(milliseconds: 350),
+            child: Center(
+              child: Image.asset(Images.inAppLogo, width: 200),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
