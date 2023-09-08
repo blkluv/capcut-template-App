@@ -848,6 +848,10 @@
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml"
     },
     {
+        "merged": "com.stormdeve.capcut_template.app-merged_res-31:/mipmap-xxxhdpi_launcher_icon.png.flat",
+        "source": "com.stormdeve.capcut_template.app-main-23:/mipmap-xxxhdpi/launcher_icon.png"
+    },
+    {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-v21_abc_list_divider_material.xml.flat",
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-v21/abc_list_divider_material.xml"
     },
@@ -1332,6 +1336,10 @@
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-hdpi-v4/abc_textfield_search_default_mtrl_alpha.9.png"
     },
     {
+        "merged": "com.stormdeve.capcut_template.app-merged_res-31:/mipmap-hdpi_launcher_icon.png.flat",
+        "source": "com.stormdeve.capcut_template.app-main-23:/mipmap-hdpi/launcher_icon.png"
+    },
+    {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-hdpi-v4_abc_ic_star_half_black_16dp.png.flat",
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-hdpi-v4/abc_ic_star_half_black_16dp.png"
     },
@@ -1508,6 +1516,10 @@
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/interpolator/fast_out_slow_in.xml"
     },
     {
+        "merged": "com.stormdeve.capcut_template.app-merged_res-31:/mipmap-xxhdpi_launcher_icon.png.flat",
+        "source": "com.stormdeve.capcut_template.app-main-23:/mipmap-xxhdpi/launcher_icon.png"
+    },
+    {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-v21_abc_action_bar_item_background_material.xml.flat",
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-v21/abc_action_bar_item_background_material.xml"
     },
@@ -1630,6 +1642,10 @@
     {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-mdpi-v4_abc_textfield_activated_mtrl_alpha.9.png.flat",
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-mdpi-v4/abc_textfield_activated_mtrl_alpha.9.png"
+    },
+    {
+        "merged": "com.stormdeve.capcut_template.app-merged_res-31:/mipmap-mdpi_launcher_icon.png.flat",
+        "source": "com.stormdeve.capcut_template.app-main-23:/mipmap-mdpi/launcher_icon.png"
     },
     {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-xhdpi-v4_abc_btn_radio_to_on_mtrl_015.png.flat",
@@ -1930,6 +1946,10 @@
     {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-ldrtl-xhdpi-v17_abc_ic_menu_copy_mtrl_am_alpha.png.flat",
         "source": "com.stormdeve.capcut_template.app-appcompat-1.2.0-13:/drawable-ldrtl-xhdpi-v17/abc_ic_menu_copy_mtrl_am_alpha.png"
+    },
+    {
+        "merged": "com.stormdeve.capcut_template.app-merged_res-31:/mipmap-xhdpi_launcher_icon.png.flat",
+        "source": "com.stormdeve.capcut_template.app-main-23:/mipmap-xhdpi/launcher_icon.png"
     },
     {
         "merged": "com.stormdeve.capcut_template.app-merged_res-31:/drawable-xhdpi-v4_abc_switch_track_mtrl_alpha.9.png.flat",

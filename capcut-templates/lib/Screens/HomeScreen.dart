@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:capcut_template/Api/ApiHelper.dart';
@@ -8,12 +9,15 @@ import 'package:capcut_template/Models/Settings.dart';
 import 'package:capcut_template/Models/TemplateObject.dart';
 import 'package:capcut_template/Screens/LikedScreen.dart';
 import 'package:capcut_template/Utils/Colors.dart';
+import 'package:capcut_template/Utils/Images.dart';
 import 'package:capcut_template/Utils/Router.dart';
 import 'package:capcut_template/Utils/add_helper.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences? prefs;
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   TextEditingController searchController = TextEditingController();
+  bool showLoader = false;
+  final ScrollController scrollController = ScrollController();
+  int _offset = 1;
+  late List<int> _offsetList = [1];
+  bool _isLoading = false;
+  int _totalSize = 0;
 
   Future<void> loadBannerAd() async {
     BannerAd(
@@ -68,11 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
         for (var value in listOfCategories) {
           print('single Category$value');
-          setState(() {
-            categoriesDataList.add(
-              Category.fromJson(value),
-            );
-          });
+          if (value['name'] != 'Trending') {
+            setState(() {
+              categoriesDataList.add(
+                Category.fromJson(value),
+              );
+            });
+          }
         }
         setState(() {
           categories = categoriesDataList..sort((a, b) => a.sequence.compareTo(b.sequence));
@@ -85,9 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _getTemplates() async {
     // print('m Called');
     templates.clear();
-    await ApiHelper().getTemplates().then((templateData) {
+    await ApiHelper().getTemplates(offset: _offset.toString()).then((templateData) {
       if (templateData != null) {
         // print(templateData['templates']);
+        _totalSize = templateData['totalsize'];
         List<dynamic> listOfTemplates = templateData['templates'];
         //
         for (var value in listOfTemplates) {
@@ -116,16 +129,17 @@ class _HomeScreenState extends State<HomeScreen> {
           situation3 = true;
         }
       });
-
-      if (_selectedCategory!.name != 'For You') {
-        if (singleTemplate.category == _selectedCategory!.id) {
+      if (_selectedCategory != null) {
+        if (_selectedCategory!.name != 'For You') {
+          if (singleTemplate.category == _selectedCategory!.id) {
+            if (situation1 || situation2 || situation3) {
+              sortedItems.add(singleTemplate);
+            }
+          }
+        } else {
           if (situation1 || situation2 || situation3) {
             sortedItems.add(singleTemplate);
           }
-        }
-      } else {
-        if (situation1 || situation2 || situation3) {
-          sortedItems.add(singleTemplate);
         }
       }
     }
@@ -133,12 +147,84 @@ class _HomeScreenState extends State<HomeScreen> {
     return sortedItems;
   }
 
+  void _paginate() async {
+    int pageSize = (_totalSize / 10).ceil();
+    if (_offset < pageSize && !_offsetList.contains(_offset + 1)) {
+      setState(() {
+        _offset = _offset + 1;
+        _offsetList.add(_offset);
+        _isLoading = true;
+      });
+      await ApiHelper().getTemplates(offset: _offset.toString()).then((templateData) {
+        if (templateData != null) {
+          List<dynamic> listOfTemplates = templateData['templates'];
+          for (var value in listOfTemplates) {
+            print('single Template$value');
+            setState(() {
+              templates.add(
+                TemplateObject.fromJson(value),
+              );
+            });
+          }
+        }
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      if (_isLoading) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+    OneSignal.shared.setAppId("c1c77da3-29d3-4cb4-aa00-e49a30f3592e");
+    OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
+      log("Accepted permission: $accepted");
+    });
+    OneSignal.shared.setNotificationWillShowInForegroundHandler((OSNotificationReceivedEvent event) {
+      // Will be called whenever a notification is received in foreground
+      // Display Notification, pass null param for not displaying the notification
+      event.complete(event.notification);
+    });
+    OneSignal.shared.setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      // Will be called whenever a notification is opened/button pressed.
+      log('notification raw payload: ${result.notification.rawPayload}');
+      log('notification body: ${result.notification.body}');
+      Map<String, dynamic> custom = jsonDecode(result.notification.rawPayload!['custom']);
+      if (custom != null) {
+        log('notification custom: ${custom['a']['template_id']}');
+        log("........................check notify.....................");
+        RouterClass().singleTemplateScreenRoute(context: context, tempId: custom['a']['template_id']);
+      }
+    });
+    setState(() {
+      showLoader = true;
+    });
+    Future.delayed(Duration(seconds: 3)).then((value) {
+      setState(() {
+        showLoader = false;
+      });
+    });
     loadBannerAd();
     _getCategories();
-    _getTemplates();
-    // _getLikes();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
+      await _getTemplates();
+      scrollController.addListener(() {
+        if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !_isLoading) {
+          log('paginate');
+          if (mounted) {
+            _paginate();
+          }
+        }
+      });
+    });
+
     super.initState();
   }
 
@@ -199,15 +285,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           _selectedTab != 0 ? _bodyView() : LikedScreen(settings: widget.settings),
-          if (_bannerAd != null)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: _bannerAd!.size.width.toDouble(),
-                height: _bannerAd!.size.height.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
-              ),
-            ),
+          // if (_bannerAd != null && !showLoader)
+          //   Align(
+          //     alignment: Alignment.bottomCenter,
+          //     child: Container(
+          //       width: _bannerAd!.size.width.toDouble(),
+          //       height: _bannerAd!.size.height.toDouble(),
+          //       child: AdWidget(ad: _bannerAd!),
+          //     ),
+          //   ),
         ],
       ),
     );
@@ -217,13 +303,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       height: screenHeight,
       width: screenWidth,
-      child: Column(
-        children: [
-          _appBarView(),
-          _selectedTab != 2 ? _categoriesView() : const SizedBox(height: 15),
-          _templetesView(),
-        ],
-      ),
+      child: showLoader
+          ? Center(child: Image.asset(Images.loading, width: 60))
+          : Column(
+              children: [
+                _appBarView(),
+                _selectedTab != 2 ? _categoriesView() : const SizedBox(height: 15),
+                _templetesView(),
+                _isLoading
+                    ? Container(
+                        height: 20,
+                        width: 20,
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
     );
   }
 
@@ -291,19 +387,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _templetesView() {
     return Expanded(
       child: RefreshIndicator(
-        onRefresh: () => _getTemplates(),
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 10,
-              runSpacing: 10,
-              children: getSortTemplates()
-                  .map(
-                    (singleTemplate) => _singleTemplateView(template: singleTemplate),
-                  )
-                  .toList(),
+        onRefresh: () async {
+          setState(() {
+            _offset = 1;
+            _offsetList = [1];
+          });
+          await _getCategories();
+          await _getTemplates();
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 50),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 10,
+                runSpacing: 10,
+                children: getSortTemplates()
+                    .map(
+                      (singleTemplate) => _singleTemplateView(template: singleTemplate),
+                    )
+                    .toList(),
+              ),
             ),
           ),
         ),

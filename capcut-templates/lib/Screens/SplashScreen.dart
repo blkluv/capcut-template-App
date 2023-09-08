@@ -71,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             duration: const Duration(seconds: 2),
             delay: const Duration(milliseconds: 350),
             child: Center(
-              child: Image.asset(Images.inAppLogo, width: 200),
+              child: Image.asset(Images.inAppLogo, width: 150),
             ),
           ),
         ),

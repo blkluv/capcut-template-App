@@ -152,8 +152,8 @@
 76-->/Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/android/app/src/main/AndroidManifest.xml:6:9-42
 77        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 77-->[androidx.core:core:1.7.0] /Users/ammanahmed/.gradle/caches/transforms-3/fe5e04f437acc23ed511f2b110e1b670/transformed/core-1.7.0/AndroidManifest.xml:24:18-86
-78        android:icon="@mipmap/ic_launcher"
-78-->/Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/android/app/src/main/AndroidManifest.xml:7:9-43
+78        android:icon="@mipmap/launcher_icon"
+78-->/Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/android/app/src/main/AndroidManifest.xml:7:9-45
 79        android:label="Capcut Template" >
 79-->/Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/android/app/src/main/AndroidManifest.xml:5:9-40
 80        <activity

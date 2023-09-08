@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:capcut_template/Models/Settings.dart';
+import 'package:capcut_template/Models/TemplateObject.dart';
 import 'package:capcut_template/Utils/Colors.dart';
+import 'package:capcut_template/Utils/Router.dart';
 import 'package:capcut_template/Utils/add_provider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'Screens/SplashScreen.dart';
 
 FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -28,11 +34,6 @@ void main() async {
       child: const MyApp(),
     ),
   );
-  OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
-  OneSignal.shared.setAppId("bdf832c9-03af-4b7d-8cee-e827f9c440b0");
-  OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
-    log("Accepted permission: $accepted");
-  });
 }
 
 class MyApp extends StatefulWidget {
@@ -65,7 +66,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Capcut Templates',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: GoogleFonts.nunitoSans().fontFamily,

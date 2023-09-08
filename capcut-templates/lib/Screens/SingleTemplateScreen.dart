@@ -1,11 +1,13 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, must_be_immutable
 
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:capcut_template/Api/ApiHelper.dart';
 import 'package:capcut_template/Models/Settings.dart';
 import 'package:capcut_template/Utils/Colors.dart';
 import 'package:capcut_template/Utils/Images.dart';
+import 'package:capcut_template/Utils/Router.dart';
 import 'package:capcut_template/Utils/add_helper.dart';
 import 'package:capcut_template/Utils/add_provider.dart';
 import 'package:capcut_template/Utils/dimensions.dart';
@@ -20,9 +22,10 @@ import '../Models/TemplateObject.dart';
 import '../Utils/Functions.dart';
 
 class SingleTemplateScreen extends StatefulWidget {
-  final Settings settings;
-  final TemplateObject template;
-  SingleTemplateScreen({Key? key, required this.settings, required this.template}) : super(key: key);
+  Settings? settings;
+  TemplateObject? template;
+  final String? tempId;
+  SingleTemplateScreen({Key? key, required this.settings, required this.template, this.tempId}) : super(key: key);
 
   @override
   State<SingleTemplateScreen> createState() => _SingleTemplateScreenState();
@@ -43,28 +46,53 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   @override
   void initState() {
     super.initState();
-    _getLikes();
-    print(widget.template.video_link);
-    _controller = VideoPlayerController.network(
-      widget.template.video_link,
-    );
-    _controller.setLooping(true);
-    _initializeVideoPlayerFuture = _controller.initialize().then((value) {
-      setState(() {
-        videoInitialized = true;
+    if (widget.tempId != null) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        _loadSignleTemplate(widget.tempId!).then((value) {
+          _getLikes();
+          print(widget.template!.video_link);
+          _controller = VideoPlayerController.network(widget.template!.video_link);
+          _controller.setLooping(true);
+          _initializeVideoPlayerFuture = _controller.initialize().then((value) {
+            setState(() {
+              videoInitialized = true;
+            });
+          });
+          // SchedulerBinding.instance.addPostFrameCallback((_) {
+          //   _loadInterstitialAd();
+          // });
+          // loadBannerAd();
+          // Timer.periodic(const Duration(seconds: 3), (timer) {
+          //   if (_interstitialAd != null) {
+          //     _interstitialAd?.show();
+          //   } else {
+          //     log('interstetial add not loaded');
+          //   }
+          // });
+        });
       });
-    });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _loadInterstitialAd();
-    });
-    loadBannerAd();
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_interstitialAd != null) {
-        _interstitialAd?.show();
-      } else {
-        log('interstetial add not loaded');
-      }
-    });
+    } else {
+      _getLikes();
+      print(widget.template!.video_link);
+      _controller = VideoPlayerController.network(widget.template!.video_link);
+      _controller.setLooping(true);
+      _initializeVideoPlayerFuture = _controller.initialize().then((value) {
+        setState(() {
+          videoInitialized = true;
+        });
+      });
+      // SchedulerBinding.instance.addPostFrameCallback((_) {
+      //   _loadInterstitialAd();
+      // });
+      // loadBannerAd();
+      Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_interstitialAd != null) {
+          _interstitialAd?.show();
+        } else {
+          log('interstetial add not loaded');
+        }
+      });
+    }
   }
 
   @override
@@ -73,6 +101,28 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
     _bannerAd?.dispose();
     _interstitialAd?.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSignleTemplate(String id) async {
+    log('_getSingleTemplate');
+
+    await ApiHelper().getSingleTemplate(id).then((templateData) {
+      if (templateData != null) {
+        log('******** data: $templateData');
+        TemplateObject template = TemplateObject.fromJson(templateData['template']);
+        setState(() {
+          widget.template = template;
+        });
+      }
+    });
+    ApiHelper().getSettings().then((settingsData) {
+      if (settingsData != null) {
+        print(settingsData['setting']);
+        setState(() {
+          widget.settings = Settings.fromJson(settingsData['setting']);
+        });
+      }
+    });
   }
 
   void _loadInterstitialAd() {
@@ -145,14 +195,11 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
     return Scaffold(
       backgroundColor: AppThemeColor.backGroundColor,
       body: SafeArea(
-        child: videoInitialized
-            ? _bodyView()
-            : Center(
-                child: Image.asset(
-                  Images.loading,
-                  width: 60,
-                ),
-              ),
+        child: widget.template != null
+            ? videoInitialized
+                ? _bodyView()
+                : Center(child: Image.asset(Images.loading, width: 60))
+            : Center(child: Image.asset(Images.loading, width: 60)),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {
@@ -187,10 +234,8 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // _appBarView(),
-          // const SizedBox(
-          //   height: 20,
-          // ),
+          _appBarView(),
+          const SizedBox(height: 20),
           Expanded(
             child: Stack(
               children: [
@@ -204,7 +249,7 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Text(
-                            widget.template.Creater_name,
+                            widget.template!.Creater_name,
                             style: const TextStyle(
                               fontSize: Dimensions.fontSizeDefault,
                               color: AppThemeColor.pureBlackColor,
@@ -220,7 +265,7 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  widget.template.Template_Name,
+                                  widget.template!.Template_Name,
                                   style: const TextStyle(
                                     fontSize: Dimensions.fontSizeLarge,
                                     fontWeight: FontWeight.w700,
@@ -238,7 +283,7 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
-                                  widget.template.Usage_detail,
+                                  widget.template!.Usage_detail,
                                   style: const TextStyle(
                                     fontSize: Dimensions.fontSizeExtraSmall,
                                     color: AppThemeColor.pureWhiteColor,
@@ -270,12 +315,12 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
           ),
           GestureDetector(
             onTap: () {
-              print('Url is ${widget.settings.Redirect_url}${widget.template.Template_ID}');
+              print('Url is ${widget.settings!.Redirect_url}${widget.template!.Template_ID}');
               launchUrlByLink(
                   url:
                       //
                       // 'https://www.youtube.com/watch?v=Vp2lTtf7pzo&ab_channel=FilmSpotTrailer');
-                      '${widget.settings.Redirect_url}${widget.template.Template_ID}');
+                      '${widget.settings!.Redirect_url}${widget.template!.Template_ID}');
             },
             child: Container(
               width: screenWidth,
@@ -348,12 +393,18 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
   }
 
   Widget _appBarView() {
-    bool liked = checkLiked(template: widget.template);
+    bool liked = checkLiked(template: widget.template!);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         InkWell(
-          onTap: () => Navigator.pop(context),
+          onTap: () {
+            if (widget.tempId == null) {
+              Navigator.pop(context);
+            } else {
+              RouterClass().homeScreenRoute(context: context, settings: widget.settings!);
+            }
+          },
           child: const Icon(
             Icons.arrow_back_ios,
             color: AppThemeColor.pureBlackColor,
@@ -365,12 +416,12 @@ class _SingleTemplateScreenState extends State<SingleTemplateScreen> {
               onTap: () async {
                 if (!liked) {
                   setState(() {
-                    _likes.add(widget.template.id);
+                    _likes.add(widget.template!.id);
                   });
                   await prefs!.setStringList('likes', _likes);
                 } else {
                   setState(() {
-                    _likes.remove(widget.template.id);
+                    _likes.remove(widget.template!.id);
                   });
                   await prefs!.setStringList('likes', _likes);
                 }

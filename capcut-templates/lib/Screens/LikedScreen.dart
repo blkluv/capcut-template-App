@@ -48,19 +48,12 @@ class _LikedScreenState extends State<LikedScreen> {
     List<TemplateObject> sortedItems = [];
 
     for (var singleTemplate in templates) {
-      bool situation1 = singleTemplate.Creater_name.toLowerCase()
-              .split(searchText.toLowerCase())
-              .length >
-          1;
-      bool situation2 = singleTemplate.Template_Name.toLowerCase()
-              .split(searchText.toLowerCase())
-              .length >
-          1;
+      bool situation1 = singleTemplate.Creater_name.toLowerCase().split(searchText.toLowerCase()).length > 1;
+      bool situation2 = singleTemplate.Template_Name.toLowerCase().split(searchText.toLowerCase()).length > 1;
 
       bool situation3 = false;
       singleTemplate.Tags.split('#').forEach((singleTag) {
-        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length >
-            1) {
+        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length > 1) {
           // print(singleTag);
           situation3 = true;
         }
@@ -133,17 +126,19 @@ class _LikedScreenState extends State<LikedScreen> {
 
   Widget _templetesView() {
     return Expanded(
-      child: SingleChildScrollView(
-        child: Wrap(
-          alignment: WrapAlignment.start,
-          spacing: 10,
-          runSpacing: 10,
-          children: getSortTemplates()
-              .map(
-                (singleTemplate) =>
-                    _singleTemplateView(template: singleTemplate),
-              )
-              .toList(),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: SingleChildScrollView(
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 10,
+            runSpacing: 10,
+            children: getSortTemplates()
+                .map(
+                  (singleTemplate) => _singleTemplateView(template: singleTemplate),
+                )
+                .toList(),
+          ),
         ),
       ),
     );
@@ -202,8 +197,7 @@ class _LikedScreenState extends State<LikedScreen> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                       decoration: BoxDecoration(
                         color: AppThemeColor.dullBlackColor,
                         borderRadius: BorderRadius.circular(4),
@@ -286,7 +280,7 @@ class _LikedScreenState extends State<LikedScreen> {
       decoration: const BoxDecoration(color: AppThemeColor.backGroundColor),
       child: SafeArea(
         child: Container(
-          height: 30,
+          height: 40,
           margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: const BoxDecoration(
@@ -298,48 +292,91 @@ class _LikedScreenState extends State<LikedScreen> {
           child: Container(
             decoration: const BoxDecoration(
               color: AppThemeColor.dullWhiteColor,
-              // border: Border.all(color: AppThemeColor.grayColor),
-              borderRadius: BorderRadius.all(
-                Radius.circular(
-                  30,
-                ),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
+            // padding: const EdgeInsets.all(6),
+            child: TextFormField(
+              // controller: searchController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(
                   Icons.search,
                   size: 20,
                   color: AppThemeColor.dullFontColor,
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 8),
-                      border: InputBorder.none,
-                      hintText: 'Search...',
-                    ),
-                    style: TextStyle(
-                      fontSize: Dimensions.fontSizeDefault,
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        searchText = text;
-                      });
-                    },
-                  ),
-                ),
-              ],
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 7),
+                hintText: 'Search Template...',
+              ),
+              style: const TextStyle(fontSize: Dimensions.fontSizeDefault),
+              onChanged: (text) {
+                setState(() {
+                  searchText = text;
+                  // searchController.text = text;
+                });
+              },
             ),
           ),
         ),
       ),
     );
+    // return Container(
+    //   decoration: const BoxDecoration(color: AppThemeColor.backGroundColor),
+    //   child: SafeArea(
+    //     child: Container(
+    //       height: 30,
+    //       margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
+    //       padding: const EdgeInsets.symmetric(horizontal: 20),
+    //       decoration: const BoxDecoration(
+    //         borderRadius: BorderRadius.only(
+    //           bottomLeft: Radius.circular(10),
+    //           bottomRight: Radius.circular(10),
+    //         ),
+    //       ),
+    //       child: Container(
+    //         decoration: const BoxDecoration(
+    //           color: AppThemeColor.dullWhiteColor,
+    //           // border: Border.all(color: AppThemeColor.grayColor),
+    //           borderRadius: BorderRadius.all(
+    //             Radius.circular(
+    //               30,
+    //             ),
+    //           ),
+    //         ),
+    //         padding: const EdgeInsets.all(6),
+    //         child: Row(
+    //           crossAxisAlignment: CrossAxisAlignment.center,
+    //           children: [
+    //             const Icon(
+    //               Icons.search,
+    //               size: 20,
+    //               color: AppThemeColor.dullFontColor,
+    //             ),
+    //             const SizedBox(
+    //               width: 8,
+    //             ),
+    //             Expanded(
+    //               child: TextFormField(
+    //                 decoration: const InputDecoration(
+    //                   contentPadding: EdgeInsets.symmetric(vertical: 8),
+    //                   border: InputBorder.none,
+    //                   hintText: 'Search...',
+    //                 ),
+    //                 style: TextStyle(
+    //                   fontSize: Dimensions.fontSizeDefault,
+    //                 ),
+    //                 onChanged: (text) {
+    //                   setState(() {
+    //                     searchText = text;
+    //                   });
+    //                 },
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   bool checkLiked({required TemplateObject template}) {

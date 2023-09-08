@@ -75,7 +75,7 @@
     <application
         android:name="android.app.Application"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:label="Capcut Template" >
         <activity
             android:name="com.stormdeve.capcut_template.MainActivity"
