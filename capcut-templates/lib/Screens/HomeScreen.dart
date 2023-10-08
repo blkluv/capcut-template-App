@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double screenWidth = 1000;
   double screenHeight = 1000;
   List<Category> categories = [];
+  List<Category> categoriesWithoutTrending = [];
   List<TemplateObject> templates = [];
   int _selectedTab = 1;
   Category? _selectedCategory;
@@ -78,17 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
         for (var value in listOfCategories) {
           print('single Category$value');
-          if (value['name'] != 'Trending') {
-            setState(() {
-              categoriesDataList.add(
-                Category.fromJson(value),
-              );
-            });
-          }
+          setState(() {
+            categoriesDataList.add(Category.fromJson(value));
+          });
         }
         setState(() {
           categories = categoriesDataList..sort((a, b) => a.sequence.compareTo(b.sequence));
-          _selectedCategory = categories.singleWhere((element) => element.name == 'For You');
+          categoriesWithoutTrending = categories.where((element) => element.name != 'Trending').toList();
+          _selectedCategory = categoriesWithoutTrending.singleWhere((element) => element.name == 'For You');
         });
       }
     });
@@ -333,13 +331,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-                itemCount: categories.length,
+                itemCount: categoriesWithoutTrending.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
                       setState(() {
-                        _selectedCategory = categories[index];
+                        _selectedCategory = categoriesWithoutTrending[index];
                       });
                     },
                     child: Container(
@@ -350,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       margin: const EdgeInsets.only(
                         right: 10,
                       ),
-                      decoration: _selectedCategory == categories[index]
+                      decoration: _selectedCategory == categoriesWithoutTrending[index]
                           ? BoxDecoration(
                               color: AppThemeColor.pureBlackColor,
                               borderRadius: BorderRadius.circular(10),
@@ -368,11 +366,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                       child: Text(
-                        categories[index].name,
+                        categoriesWithoutTrending[index].name,
                         style: TextStyle(
                           fontSize: Dimensions.fontSizeDefault,
-                          color: _selectedCategory == categories[index] ? AppThemeColor.pureWhiteColor : AppThemeColor.pureBlackColor,
-                          fontWeight: _selectedCategory == categories[index] ? FontWeight.w700 : FontWeight.w400,
+                          color: _selectedCategory == categoriesWithoutTrending[index] ? AppThemeColor.pureWhiteColor : AppThemeColor.pureBlackColor,
+                          fontWeight: _selectedCategory == categoriesWithoutTrending[index] ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                     ),
@@ -396,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
           await _getTemplates();
         },
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 50),
+          padding: const EdgeInsets.only(bottom: 0),
           child: SingleChildScrollView(
             controller: scrollController,
             child: Container(
