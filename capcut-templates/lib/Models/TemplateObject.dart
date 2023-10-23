@@ -42,7 +42,7 @@ class TemplateObject {
       video_link: json['video_link'],
       poster_link: json['poster_link'],
       Usage_detail: json['Usage_detail'],
-      category: json['category'] != null ? json['category']['_id'] : '',
+      category: (json['category'] != null && (json['category'] as List).isNotEmpty) ? json['category'][0]['_id'] : '',
       Clips: json['Clips'],
       Creater_name: json['Creater_name'],
       Creater_desc: json['Creater_desc'],

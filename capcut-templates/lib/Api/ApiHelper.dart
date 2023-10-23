@@ -25,6 +25,7 @@ class ApiHelper {
   Future<Map<dynamic, dynamic>?> getCategories() async {
     try {
       String uri = '${appBaseUrl}category/AllCategories';
+      log(uri.toString());
       http.Response response = await http.get(Uri.parse(uri)).timeout(Duration(seconds: timeoutInSeconds));
       print(response.body);
       Map<dynamic, dynamic> categoriesData = jsonDecode(response.body);
@@ -34,9 +35,9 @@ class ApiHelper {
     }
   }
 
-  Future<Map<dynamic, dynamic>?> getTemplates({String offset = '1'}) async {
+  Future<Map<dynamic, dynamic>?> getTemplates({String id = '' ,String offset = '1'}) async {
     try {
-      String uri = '${appBaseUrl}template/AllTemplates?offset=${offset}&limit=14';
+      String uri = '${appBaseUrl}template/AllTemplates/$id?offset=${offset}&limit=14';
       log(uri.toString());
       http.Response response = await http.get(Uri.parse(uri)).timeout(Duration(seconds: timeoutInSeconds));
       Map<dynamic, dynamic> categoriesData = jsonDecode(response.body);

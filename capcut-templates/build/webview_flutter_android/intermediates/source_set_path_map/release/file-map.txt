@@ -1,0 +1,13 @@
+io.flutter.plugins.webviewflutter.webview_flutter_android-core-1.6.0-0 /Users/ammanahmed/.gradle/caches/transforms-3/1f72320146c388edd0ca5fbaef4b9e5a/transformed/core-1.6.0/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-jetified-annotation-experimental-1.1.0-1 /Users/ammanahmed/.gradle/caches/transforms-3/93cebe448fb8f07eb5d0a3f458b3b918/transformed/jetified-annotation-experimental-1.1.0/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-webkit-1.7.0-2 /Users/ammanahmed/.gradle/caches/transforms-3/a78bc31200cc1b277aed5c602e32db0a/transformed/webkit-1.7.0/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-jetified-window-1.0.0-beta04-3 /Users/ammanahmed/.gradle/caches/transforms-3/d80b6ac05903106b53608f4622e8b9bb/transformed/jetified-window-1.0.0-beta04/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-jetified-window-java-1.0.0-beta04-4 /Users/ammanahmed/.gradle/caches/transforms-3/f2b8f0510ddcfbb302ca28280f281979/transformed/jetified-window-java-1.0.0-beta04/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-main-5 /Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter_android-3.9.1/android/src/main/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-release-6 /Users/ammanahmed/.pub-cache/hosted/pub.dev/webview_flutter_android-3.9.1/android/src/release/res
+io.flutter.plugins.webviewflutter.webview_flutter_android-pngs-7 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/generated/res/pngs/release
+io.flutter.plugins.webviewflutter.webview_flutter_android-resValues-8 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/generated/res/resValues/release
+io.flutter.plugins.webviewflutter.webview_flutter_android-rs-9 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/generated/res/rs/release
+io.flutter.plugins.webviewflutter.webview_flutter_android-mergeReleaseResources-10 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.flutter.plugins.webviewflutter.webview_flutter_android-mergeReleaseResources-11 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.flutter.plugins.webviewflutter.webview_flutter_android-merged_res-12 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/webview_flutter_android/intermediates/merged_res/release

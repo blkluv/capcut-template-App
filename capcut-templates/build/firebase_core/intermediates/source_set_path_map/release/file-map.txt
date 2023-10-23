@@ -1,0 +1,14 @@
+io.flutter.plugins.firebase.core.firebase_core-core-1.6.0-0 /Users/ammanahmed/.gradle/caches/transforms-3/1f72320146c388edd0ca5fbaef4b9e5a/transformed/core-1.6.0/res
+io.flutter.plugins.firebase.core.firebase_core-jetified-annotation-experimental-1.1.0-1 /Users/ammanahmed/.gradle/caches/transforms-3/93cebe448fb8f07eb5d0a3f458b3b918/transformed/jetified-annotation-experimental-1.1.0/res
+io.flutter.plugins.firebase.core.firebase_core-jetified-firebase-common-20.3.3-2 /Users/ammanahmed/.gradle/caches/transforms-3/a39a705282a103c08866cccf65aee02f/transformed/jetified-firebase-common-20.3.3/res
+io.flutter.plugins.firebase.core.firebase_core-jetified-window-1.0.0-beta04-3 /Users/ammanahmed/.gradle/caches/transforms-3/d80b6ac05903106b53608f4622e8b9bb/transformed/jetified-window-1.0.0-beta04/res
+io.flutter.plugins.firebase.core.firebase_core-jetified-play-services-basement-18.1.0-4 /Users/ammanahmed/.gradle/caches/transforms-3/eb2451eaf03b15e8e9c133c22d4bc35b/transformed/jetified-play-services-basement-18.1.0/res
+io.flutter.plugins.firebase.core.firebase_core-jetified-window-java-1.0.0-beta04-5 /Users/ammanahmed/.gradle/caches/transforms-3/f2b8f0510ddcfbb302ca28280f281979/transformed/jetified-window-java-1.0.0-beta04/res
+io.flutter.plugins.firebase.core.firebase_core-main-6 /Users/ammanahmed/.pub-cache/hosted/pub.dev/firebase_core-2.15.0/android/src/main/res
+io.flutter.plugins.firebase.core.firebase_core-release-7 /Users/ammanahmed/.pub-cache/hosted/pub.dev/firebase_core-2.15.0/android/src/release/res
+io.flutter.plugins.firebase.core.firebase_core-pngs-8 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/generated/res/pngs/release
+io.flutter.plugins.firebase.core.firebase_core-resValues-9 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/generated/res/resValues/release
+io.flutter.plugins.firebase.core.firebase_core-rs-10 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/generated/res/rs/release
+io.flutter.plugins.firebase.core.firebase_core-mergeReleaseResources-11 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.flutter.plugins.firebase.core.firebase_core-mergeReleaseResources-12 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.flutter.plugins.firebase.core.firebase_core-merged_res-13 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/firebase_core/intermediates/merged_res/release

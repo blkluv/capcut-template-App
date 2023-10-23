@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _offset = 1;
   late List<int> _offsetList = [1];
   bool _isLoading = false;
+  bool _isTemplateLoading = false;
   int _totalSize = 0;
 
   Future<void> loadBannerAd() async {
@@ -92,57 +93,26 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _getTemplates() async {
-    // print('m Called');
+  Future<void> _getTemplates({required String id}) async {
+    setState(() {
+      _isTemplateLoading = true;
+    });
     templates.clear();
-    await ApiHelper().getTemplates(offset: _offset.toString()).then((templateData) {
+    await ApiHelper().getTemplates(id: id, offset: _offset.toString()).then((templateData) {
       if (templateData != null) {
-        // print(templateData['templates']);
         _totalSize = templateData['totalsize'];
-        List<dynamic> listOfTemplates = templateData['templates'];
-        //
+        List<dynamic> listOfTemplates = templateData['template'];
         for (var value in listOfTemplates) {
           print('single Template$value');
           setState(() {
-            templates.add(
-              TemplateObject.fromJson(value),
-            );
+            templates.add(TemplateObject.fromJson(value));
           });
         }
       }
-    });
-  }
-
-  List<TemplateObject> getSortTemplates() {
-    List<TemplateObject> sortedItems = [];
-
-    for (var singleTemplate in templates) {
-      bool situation1 = singleTemplate.Creater_name.toLowerCase().split(searchText.toLowerCase()).length > 1;
-      bool situation2 = singleTemplate.Template_Name.toLowerCase().split(searchText.toLowerCase()).length > 1;
-
-      bool situation3 = false;
-      singleTemplate.Tags.split('#').forEach((singleTag) {
-        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length > 1) {
-          // print(singleTag);
-          situation3 = true;
-        }
+      setState(() {
+        _isTemplateLoading = false;
       });
-      if (_selectedCategory != null) {
-        if (_selectedCategory!.name != 'For You') {
-          if (singleTemplate.category == _selectedCategory!.id) {
-            if (situation1 || situation2 || situation3) {
-              sortedItems.add(singleTemplate);
-            }
-          }
-        } else {
-          if (situation1 || situation2 || situation3) {
-            sortedItems.add(singleTemplate);
-          }
-        }
-      }
-    }
-
-    return sortedItems;
+    });
   }
 
   void _paginate() async {
@@ -209,10 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
         showLoader = false;
       });
     });
-    loadBannerAd();
-    _getCategories();
+    // loadBannerAd();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
-      await _getTemplates();
+      await _getCategories();
+      await _getTemplates(id: categories[0].id);
       scrollController.addListener(() {
         if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !_isLoading) {
           log('paginate');
@@ -238,18 +208,30 @@ class _HomeScreenState extends State<HomeScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) {
-          setState(() {
-            _selectedTab = index;
-            if (_selectedTab == 2) {
+        onTap: (index) async {
+          _selectedTab = index;
+          if (_selectedTab == 2) {
+            _leavedCategory = _selectedCategory;
+            _selectedCategory = categories.singleWhere((element) => element.name == 'Trending');
+            _getTemplates(id: _selectedCategory!.id);
+          } else if (_selectedTab == 0) {
+            setState(() {
               _leavedCategory = _selectedCategory;
-              _selectedCategory = categories.singleWhere((element) => element.name == 'Trending');
-            } else if (_selectedTab == 0) {
-              _leavedCategory = _selectedCategory;
-            } else {
-              _selectedCategory = _leavedCategory;
-            }
-          });
+            });
+          } else {
+            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              _getCategories();
+              _getTemplates(id: categories[0].id);
+              scrollController.addListener(() {
+                if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !_isLoading) {
+                  log('paginate');
+                  if (mounted) {
+                    _paginate();
+                  }
+                }
+              });
+            });
+          }
         },
         currentIndex: _selectedTab,
         selectedItemColor: AppThemeColor.pureBlackColor,
@@ -335,10 +317,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         _selectedCategory = categoriesWithoutTrending[index];
                       });
+                      await _getTemplates(id: _selectedCategory!.id);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -383,37 +366,46 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _templetesView() {
-    return Expanded(
-      child: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {
-            _offset = 1;
-            _offsetList = [1];
-          });
-          await _getCategories();
-          await _getTemplates();
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 0),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Wrap(
-                alignment: WrapAlignment.start,
-                spacing: 10,
-                runSpacing: 10,
-                children: getSortTemplates()
-                    .map(
-                      (singleTemplate) => _singleTemplateView(template: singleTemplate),
-                    )
-                    .toList(),
+    return _isTemplateLoading
+        ? Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(Images.loading, width: 60),
+              ],
+            ),
+          )
+        : Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                setState(() {
+                  _offset = 1;
+                  _offsetList = [1];
+                });
+                await _getCategories();
+                await _getTemplates(id: _selectedCategory!.id);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: templates
+                          .map(
+                            (singleTemplate) => _singleTemplateView(template: singleTemplate),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   Widget _singleTemplateView({required TemplateObject template}) {

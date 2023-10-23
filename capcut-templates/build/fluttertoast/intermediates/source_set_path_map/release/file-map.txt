@@ -1,0 +1,12 @@
+io.github.ponnamkarthik.toast.fluttertoast-core-1.6.0-0 /Users/ammanahmed/.gradle/caches/transforms-3/1f72320146c388edd0ca5fbaef4b9e5a/transformed/core-1.6.0/res
+io.github.ponnamkarthik.toast.fluttertoast-jetified-annotation-experimental-1.1.0-1 /Users/ammanahmed/.gradle/caches/transforms-3/93cebe448fb8f07eb5d0a3f458b3b918/transformed/jetified-annotation-experimental-1.1.0/res
+io.github.ponnamkarthik.toast.fluttertoast-jetified-window-1.0.0-beta04-2 /Users/ammanahmed/.gradle/caches/transforms-3/d80b6ac05903106b53608f4622e8b9bb/transformed/jetified-window-1.0.0-beta04/res
+io.github.ponnamkarthik.toast.fluttertoast-jetified-window-java-1.0.0-beta04-3 /Users/ammanahmed/.gradle/caches/transforms-3/f2b8f0510ddcfbb302ca28280f281979/transformed/jetified-window-java-1.0.0-beta04/res
+io.github.ponnamkarthik.toast.fluttertoast-main-4 /Users/ammanahmed/.pub-cache/hosted/pub.dev/fluttertoast-8.2.2/android/src/main/res
+io.github.ponnamkarthik.toast.fluttertoast-release-5 /Users/ammanahmed/.pub-cache/hosted/pub.dev/fluttertoast-8.2.2/android/src/release/res
+io.github.ponnamkarthik.toast.fluttertoast-pngs-6 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/generated/res/pngs/release
+io.github.ponnamkarthik.toast.fluttertoast-resValues-7 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/generated/res/resValues/release
+io.github.ponnamkarthik.toast.fluttertoast-rs-8 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/generated/res/rs/release
+io.github.ponnamkarthik.toast.fluttertoast-mergeReleaseResources-9 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.github.ponnamkarthik.toast.fluttertoast-mergeReleaseResources-10 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.github.ponnamkarthik.toast.fluttertoast-merged_res-11 /Users/ammanahmed/Documents/FlutterProjects/upwork/capcut-template-App/capcut-templates/build/fluttertoast/intermediates/merged_res/release
