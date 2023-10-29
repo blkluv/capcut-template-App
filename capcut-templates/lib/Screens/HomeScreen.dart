@@ -210,6 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) async {
           _selectedTab = index;
+          _offset = 1;
+          _offsetList = [1];
           if (_selectedTab == 2) {
             _leavedCategory = _selectedCategory;
             _selectedCategory = categories.singleWhere((element) => element.name == 'Trending');
@@ -319,6 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   return InkWell(
                     onTap: () async {
                       setState(() {
+                        _offset = 1;
+                        _offsetList = [1];
                         _selectedCategory = categoriesWithoutTrending[index];
                       });
                       await _getTemplates(id: _selectedCategory!.id);
@@ -595,7 +599,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onChanged: (text) {
                 setState(() {
                   searchText = text;
-                  // searchController.text = text;
                 });
               },
             ),

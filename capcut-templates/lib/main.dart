@@ -1,10 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:capcut_template/Models/Settings.dart';
-import 'package:capcut_template/Models/TemplateObject.dart';
 import 'package:capcut_template/Utils/Colors.dart';
-import 'package:capcut_template/Utils/Router.dart';
 import 'package:capcut_template/Utils/add_provider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'Screens/SplashScreen.dart';
 

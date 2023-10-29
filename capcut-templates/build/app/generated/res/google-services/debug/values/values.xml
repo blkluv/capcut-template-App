@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">703832008853-e5hf4u8gu64uq4b4eqa0cujgni7uj18o.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">703832008853</string>
+    <string name="google_api_key" translatable="false">AIzaSyBLfAQxi7_9aPOrdEjEo3I48nj8DLaX1wc</string>
+    <string name="google_app_id" translatable="false">1:703832008853:android:19189f07ad9dc451e4d39c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBLfAQxi7_9aPOrdEjEo3I48nj8DLaX1wc</string>
+    <string name="google_storage_bucket" translatable="false">capcuttemplateapp.appspot.com</string>
+    <string name="project_id" translatable="false">capcuttemplateapp</string>
+</resources>
