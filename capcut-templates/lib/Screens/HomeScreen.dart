@@ -115,6 +115,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  List<TemplateObject> getSortTemplates() {
+    List<TemplateObject> sortedItems = [];
+
+    for (var singleTemplate in templates) {
+      bool situation1 = singleTemplate.Creater_name.toLowerCase().split(searchText.toLowerCase()).length > 1;
+      bool situation2 = singleTemplate.Template_Name.toLowerCase().split(searchText.toLowerCase()).length > 1;
+
+      bool situation3 = false;
+      singleTemplate.Tags.split('#').forEach((singleTag) {
+        if (singleTag.toLowerCase().split(searchText.toLowerCase()).length > 1) {
+          situation3 = true;
+        }
+      });
+
+      if (situation1 || situation2 || situation3) {
+        sortedItems.add(singleTemplate);
+      }
+    }
+
+    return sortedItems;
+  }
+
   void _paginate() async {
     int pageSize = (_totalSize / 10).ceil();
     if (_offset < pageSize && !_offsetList.contains(_offset + 1)) {
@@ -399,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       alignment: WrapAlignment.start,
                       spacing: 10,
                       runSpacing: 10,
-                      children: templates
+                      children: getSortTemplates()
                           .map(
                             (singleTemplate) => _singleTemplateView(template: singleTemplate),
                           )

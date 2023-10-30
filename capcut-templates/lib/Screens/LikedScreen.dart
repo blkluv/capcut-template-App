@@ -54,7 +54,6 @@ class _LikedScreenState extends State<LikedScreen> {
       bool situation3 = false;
       singleTemplate.Tags.split('#').forEach((singleTag) {
         if (singleTag.toLowerCase().split(searchText.toLowerCase()).length > 1) {
-          // print(singleTag);
           situation3 = true;
         }
       });
