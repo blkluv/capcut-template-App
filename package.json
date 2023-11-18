@@ -1,0 +1,44 @@
+{
+  "name": "solicit",
+  "version": "0.1.0",
+  "private": true,
+  "types": "typings/solana.d.ts",
+
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "prisma:generate": "prisma generate"
+  },
+  "dependencies": {
+    "@magic-ext/solana": "^16.1.1",
+    "@magic-sdk/admin": "^2.0.1",
+    "@magic-sdk/types": "^17.0.2",
+    "@prisma/client": "^5.4.1",
+    "@solana/web3.js": "^1.87.1",
+    "axios": "^1.5.1",
+    "magic-sdk": "^20.1.1",
+    "next": "13.5.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-modal": "^3.16.1",
+    "react-social-media-embed": "^2.3.6",
+    "react-twitter-embed": "^4.0.4",
+    "react-youtube": "^10.1.0",
+    "recoil": "^0.7.7",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-modal": "^3.16.1",
+    "autoprefixer": "^10",
+    "postcss": "^8",
+    "prisma": "^5.4.1",
+    "tailwindcss": "^3",
+    "typescript": "^5"
+  }
+}
